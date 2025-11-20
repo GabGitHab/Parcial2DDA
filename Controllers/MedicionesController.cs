@@ -3,6 +3,7 @@ using Parcial2DDA.Data;
 using Parcial2DDA.Models;
 using Parcial2DDA.Models.Dtos;
 using Parcial2DDA.Controllers;
+using Parcial2DDA.Models.Servicios;
 namespace Parcial2DDA.Controllers
 {
     [ApiController]
@@ -10,9 +11,11 @@ namespace Parcial2DDA.Controllers
     public class MedicionesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public MedicionesController(AppDbContext context)
+        private readonly CalculosService _calculoService;
+        public MedicionesController(AppDbContext context, CalculosService calculoService)
         {
             _context = context;
+            _calculoService = calculoService;
         }
         [HttpPost("entrada")]
         public async Task<ActionResult> RegistrarEntrada([FromBody] MedicionDto medicion)
@@ -46,7 +49,6 @@ namespace Parcial2DDA.Controllers
             {
                 return BadRequest();
             }
-            
             Medicion medicionEntrada = _context.Mediciones.FirstOrDefault(m=>m.Huella == medicionDto.huella);
             medicionEntrada.TiempoSalida= DateTime.Now;
             _context.Update(medicionEntrada);
@@ -67,7 +69,11 @@ namespace Parcial2DDA.Controllers
         [HttpGet("tiempoTotal")]
         public async Task<ActionResult> TiempoTotalCliente(string huella)
         {
-            return Ok();
+            Medicion medicion = _context.Mediciones.FirstOrDefault(medicion=>medicion.Huella== huella);
+            
+            int totalTiempo = _calculoService.CantidadTiempoEnLocal(medicion);
+            
+            return Ok($"El tiempo total que estubo el cliente son {totalTiempo} segundos");
         }
     }
 

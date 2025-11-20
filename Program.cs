@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Parcial2DDA.Data;
+using Parcial2DDA.Models.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<CalculosService>();
 
 var app = builder.Build();
 
